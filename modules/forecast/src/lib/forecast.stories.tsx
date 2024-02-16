@@ -3,10 +3,12 @@ import { Forecast } from './forecast';
 
 import { within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
+import { reactRouterDecorator } from '@interviewspnpm/utils';
 
 const meta: Meta<typeof Forecast> = {
   component: Forecast,
   title: 'Forecast',
+  decorators: [reactRouterDecorator],
 };
 export default meta;
 type Story = StoryObj<typeof Forecast>;

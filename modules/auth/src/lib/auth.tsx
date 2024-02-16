@@ -1,4 +1,4 @@
-import { Route, Link } from 'react-router-dom';
+import { Route, Link, Routes } from 'react-router-dom';
 
 import styles from './auth.module.scss';
 
@@ -15,10 +15,12 @@ export function Auth(props: AuthProps) {
           <Link to="/">modules/auth/src/lib/auth root</Link>
         </li>
       </ul>
-      <Route
-        path="/"
-        element={<div>This is the modules/auth/src/lib/auth root route.</div>}
-      />
+      <Routes>
+        <Route
+          path="/"
+          element={<div>This is the modules/auth/src/lib/auth root route.</div>}
+        />
+      </Routes>
     </div>
   );
 }
