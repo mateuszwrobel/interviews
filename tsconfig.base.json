@@ -17,7 +17,7 @@
     "paths": {
       "@interviewspnpm/auth": ["modules/auth/src/index.ts"],
       "@interviewspnpm/forecast": ["modules/forecast/src/index.ts"],
-      "@interviewspnpm/utils": ["modules/utils/src/index.ts"]
+      "@interviewspnpm/utils": ["modules/utils/src/index.ts"],
     }
   },
   "exclude": ["node_modules", "tmp"]

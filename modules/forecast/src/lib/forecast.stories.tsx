@@ -5,6 +5,8 @@ import { within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 import { reactRouterDecorator } from '@interviewspnpm/utils';
 
+// import '/src/styles.scss';
+
 const meta: Meta<typeof Forecast> = {
   component: Forecast,
   title: 'Forecast',
