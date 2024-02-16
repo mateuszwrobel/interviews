@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@interviewspnpm/auth": ["modules/auth/src/index.ts"]
+      "@interviewspnpm/auth": ["modules/auth/src/index.ts"],
+      "@interviewspnpm/forecast": ["modules/forecast/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
