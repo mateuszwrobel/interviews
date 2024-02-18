@@ -1,0 +1,19 @@
+{
+  "name": "core",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "modules/core/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/modules/core",
+        "main": "modules/core/src/index.ts",
+        "tsConfig": "modules/core/tsconfig.lib.json",
+        "assets": ["modules/core/*.md"]
+      }
+    }
+  },
+  "tags": []
+}
