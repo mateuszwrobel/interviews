@@ -1,14 +1,15 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/nhgNyvQ8HJw
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
-import { components } from '@interviewspnpm/utils';
-import { MoonIcon, SunsetIcon, SunriseIcon, SunIcon } from './icons';
+import { MoonIcon, SunIcon, SunriseIcon, SunsetIcon } from './icons';
+import {
+  generateWeatherDataForDays,
+  partialTimeframe,
+  WeatherData,
+  WeatherDataForDay,
+  WeatherDataForDays,
+} from './utils/forecastGenerator';
+import { CityForm } from './components/cityForm';
+import { useGetForecast } from './hooks/useGetForecast';
 
-const { Input, Label, Button } = components;
-
-const TIME_FRAMES = {
+export const TIME_FRAMES = {
   morning: {
     name: 'Morning',
     IconComponent: SunriseIcon,
@@ -27,9 +28,15 @@ const TIME_FRAMES = {
   },
 } as const;
 
-type TimeFrame = keyof typeof TIME_FRAMES;
+export type TimeFrame = keyof typeof TIME_FRAMES;
 
-function PartialForecast({ timeframe }: { timeframe: TimeFrame }) {
+export function PartialForecast({
+  timeframe,
+  weatherData,
+}: {
+  timeframe: TimeFrame;
+  weatherData: WeatherData;
+}) {
   const { name, IconComponent } = TIME_FRAMES[timeframe];
   return (
     <div className="flex items-center gap-4">
@@ -37,68 +44,90 @@ function PartialForecast({ timeframe }: { timeframe: TimeFrame }) {
       <div className="grid gap-0.5">
         <p className="text-sm font-medium">{name}</p>
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          Partly cloudy. High 42F. Winds NW at 10 to 15 mph.
+          {weatherData.cloudDescription}, {weatherData.temperatureC}°C (
+          {weatherData.temperatureF}°F). Winds {weatherData.windDirection} at{' '}
+          {weatherData.windStrengthKmh} Km/h ({weatherData.windStrengthMph}{' '}
+          mph).
         </p>
       </div>
     </div>
   );
 }
 
-export function Forecast() {
+function dayDataToPartialForecasts(
+  acc: JSX.Element[],
+  dayData: [string, WeatherData]
+) {
+  const [timeframe, weatherData] = dayData as [partialTimeframe, WeatherData];
+  if (weatherData.timestamp > Date.now()) {
+    acc.push(
+      <PartialForecast
+        key={timeframe}
+        timeframe={timeframe}
+        weatherData={weatherData}
+      />
+    );
+  }
+  return acc;
+}
+
+function renderDay(day: [string, WeatherDataForDay]) {
+  const [dayKey, dayData] = day as [
+    keyof WeatherDataForDays,
+    WeatherDataForDay
+  ];
+  const dayLabel = dayKey === 'today' ? 'Today' : 'Tomorrow';
+
+  const partialForecasts = Object.entries(dayData).reduce(
+    dayDataToPartialForecasts,
+    [] as JSX.Element[]
+  );
+
+  if (partialForecasts.length === 0) {
+    return null;
+  }
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="p-4 bg-gray-50 border-b border-gray-200 dark:bg-gray-850 dark:border-gray-800">
-        <div className="container mx-auto grid items-center gap-4">
-          <div className="flex items-center gap-2">
-            <SunriseIcon className="w-8 h-8 text-gray-500 dark:text-gray-400" />
-            <h1 className="text-xl font-semibold">Weather App</h1>
-          </div>
-        </div>
-      </header>
-      <main className="flex-1">
-        <div className="container mx-auto grid items-center gap-4 p-4">
-          <form className="flex flex-col lg:flex-row items-center gap-4">
-            <div className="grow flex items-center self-stretch lg:self-auto gap-4">
-              <Label className="m-0" htmlFor="city">
-                City
-              </Label>
-              <Input id="city" placeholder="Enter your city" required />
-            </div>
-            <Button className="self-stretch lg:self-auto" type="submit">
-              Submit
-            </Button>
-          </form>
-        </div>
-        <div className="container mx-auto grid items-center gap-4 p-4">
-          <div className="grid gap-2">
-            <h2 className="text-3xl font-semibold">New York, NY</h2>
-            <p className="text-gray-500 dark:text-gray-400">
-              Partly cloudy. High 42F. Winds NW at 10 to 15 mph.
-            </p>
-          </div>
-          <div className="flex flex-col md:flex-row justify-start gap-4 md:gap-16">
-            <div className="grid gap-1">
-              <h3 className="text-xl font-semibold">Today</h3>
-              <div className="grid gap-1.5">
-                <PartialForecast timeframe="morning" />
-                <PartialForecast timeframe="afternoon" />
-                <PartialForecast timeframe="evening" />
-                <PartialForecast timeframe="night" />
-              </div>
-            </div>
-            <div className="grid gap-1">
-              <h3 className="text-xl font-semibold">Tomorrow</h3>
-              <div className="grid gap-1.5">
-                <PartialForecast timeframe="morning" />
-                <PartialForecast timeframe="afternoon" />
-                <PartialForecast timeframe="evening" />
-                <PartialForecast timeframe="night" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
+    <div key={dayKey} className="grid gap-1">
+      <h3 className="text-xl font-semibold">{dayLabel}</h3>
+      <div className="grid gap-1.5">{partialForecasts}</div>
     </div>
+  );
+}
+
+export function ForecastResults({
+  city,
+  forecast,
+}: {
+  city: string;
+  forecast: WeatherDataForDays;
+}) {
+  const daysForecast = Object.entries(forecast).map(renderDay);
+
+  return (
+    <div className="container mx-auto grid items-center gap-4 p-4">
+      <div className="grid gap-2">
+        <h2 className="text-3xl font-semibold">{city}</h2>
+      </div>
+      <div className="flex flex-col md:flex-row justify-start gap-4 md:gap-16">
+        {daysForecast}
+      </div>
+    </div>
+  );
+}
+
+export function Forecast() {
+  const { state, setCity } = useGetForecast();
+
+  return (
+    <>
+      <CityForm onCitySet={setCity} />
+      {state.status === 'loading' && <p>Loading...</p>}
+      {state.status === 'error' && <p>Error: {state.error.message}</p>}
+      {state.status === 'idle' && <p>Enter a city to get started</p>}
+      {state.status === 'loaded' && (
+        <ForecastResults forecast={state.forecast} city={state.city} />
+      )}
+    </>
   );
 }
 
