@@ -53,16 +53,22 @@ export function Forecast() {
             <SunriseIcon className="w-8 h-8 text-gray-500 dark:text-gray-400" />
             <h1 className="text-xl font-semibold">Weather App</h1>
           </div>
-          <form className="flex items-center gap-4">
-            <Label className="m-0" htmlFor="city">
-              City
-            </Label>
-            <Input id="city" placeholder="Enter your city" required />
-            <Button type="submit">Submit</Button>
-          </form>
         </div>
       </header>
       <main className="flex-1">
+        <div className="container mx-auto grid items-center gap-4 p-4">
+          <form className="flex flex-col lg:flex-row items-center gap-4">
+            <div className="grow flex items-center self-stretch lg:self-auto gap-4">
+              <Label className="m-0" htmlFor="city">
+                City
+              </Label>
+              <Input id="city" placeholder="Enter your city" required />
+            </div>
+            <Button className="self-stretch lg:self-auto" type="submit">
+              Submit
+            </Button>
+          </form>
+        </div>
         <div className="container mx-auto grid items-center gap-4 p-4">
           <div className="grid gap-2">
             <h2 className="text-3xl font-semibold">New York, NY</h2>
@@ -70,7 +76,7 @@ export function Forecast() {
               Partly cloudy. High 42F. Winds NW at 10 to 15 mph.
             </p>
           </div>
-          <div className="grid gap-4">
+          <div className="flex flex-col md:flex-row justify-start gap-4 md:gap-16">
             <div className="grid gap-1">
               <h3 className="text-xl font-semibold">Today</h3>
               <div className="grid gap-1.5">
