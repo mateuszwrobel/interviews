@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Forecast } from './forecast';
 
 import { within } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
 import { reactRouterDecorator } from '@interviewspnpm/utils';
 import { fireEvent } from '@testing-library/react';
 

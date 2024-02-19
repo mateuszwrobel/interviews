@@ -1,5 +1,4 @@
 import { components } from '@interviewspnpm/utils';
-import { useState } from 'react';
 const { Input, Label, Button } = components;
 export function CityForm({ onCitySet }: { onCitySet: (city: string) => void }) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
